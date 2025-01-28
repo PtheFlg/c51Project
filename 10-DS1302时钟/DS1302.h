@@ -3,18 +3,8 @@
 
 // extern unsigned char ds_time[];
 
-#define BYTE unsigned char
-typedef struct {
-    BYTE year;
-    BYTE month;
-    BYTE date;
-    BYTE hour;
-    BYTE min;
-    BYTE sec;
-    BYTE day;
-}DSTime;
 
-extern DSTime ds_time;
+extern unsigned char ds_time[];
 
 void DS1302_init();
 unsigned char DS1302_readByte(unsigned char command);

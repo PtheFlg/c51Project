@@ -12,15 +12,13 @@
 
 #define DSTIME_WP       0x8E
 
-ds_time.year = 25;
-
 sbit DS1302_CE = P3^5;
 sbit DS1302_IO = P3^4;
 sbit DS1302_SCK = P3^6;
 
-// BYTE ds_time[] = {
-//     2025, 01, 27, 22, 34, 10, 1
-// }
+unsigned char ds_time[] = {
+    25, 01, 27, 22, 34, 10, 1
+};
 
 // struct DSTime {
 //     BYTE year;
@@ -45,6 +43,11 @@ BYTE DS1302_readByte(BYTE cmd) {
     // };
     BYTE i;
     BYTE _rec = 0x00;
+	
+
+    // 上面给出了 写不同寄存器的 cmd，但这里是读寄存器的命令最后一位肯定是1
+    // 所以给 写命令最后一位置 1 即可变成读命令
+    cmd |= 0x01;
 
     DS1302_CE = 1;
     
@@ -131,36 +134,40 @@ void DS1302_writeByte(BYTE cmd, _data) {
 
 void DS1302_setTime() {
     DS1302_writeByte(DSTIME_WP, 0x00);
-    DS1302_writeByte(DSTIME_YEAR,   ds_time.year    / 10 * 16 + ds_time.year    % 10);
-    DS1302_writeByte(DSTIME_MONTH,  ds_time.month   / 10 * 16 + ds_time.month   % 10);
-    DS1302_writeByte(DSTIME_DATE,   ds_time.date    / 10 * 16 + ds_time.date    % 10);
-    DS1302_writeByte(DSTIME_HOUR,   ds_time.hour    / 10 * 16 + ds_time.hour    % 10);
-    DS1302_writeByte(DSTIME_MIN,    ds_time.min     / 10 * 16 + ds_time.min     % 10);
-    DS1302_writeByte(DSTIME_SEC,    ds_time.sec     / 10 * 16 + ds_time.sec     % 10);
-    DS1302_writeByte(DSTIME_DAY,    ds_time.day     / 10 * 16 + ds_time.day     % 10);
+    DS1302_writeByte(DSTIME_YEAR,   ds_time[0]   / 10 * 16 + ds_time[0]   % 10);
+    DS1302_writeByte(DSTIME_MONTH,  ds_time[1]   / 10 * 16 + ds_time[1]   % 10);
+    DS1302_writeByte(DSTIME_DATE,   ds_time[2]   / 10 * 16 + ds_time[2]   % 10);
+    DS1302_writeByte(DSTIME_HOUR,   ds_time[3]   / 10 * 16 + ds_time[3]   % 10);
+    DS1302_writeByte(DSTIME_MIN,    ds_time[4]   / 10 * 16 + ds_time[4]   % 10);
+    DS1302_writeByte(DSTIME_SEC,    ds_time[5]   / 10 * 16 + ds_time[5]   % 10);
+    DS1302_writeByte(DSTIME_DAY,    ds_time[6]   / 10 * 16 + ds_time[6]   % 10);
     DS1302_writeByte(DSTIME_WP, 0x80);
 }
 
 void DS1302_readTime() {
     BYTE temp;
-    temp = DS1302_readByte(DSTIME_YEAR + 1);
-    ds_time.year = temp >> 4 * 10 + temp % 16;
+    temp = DS1302_readByte(DSTIME_YEAR);
 
-    temp = DS1302_readByte(DSTIME_MONTH + 1);
-    ds_time.month = temp >> 4 * 10 + temp % 16;
+    // 这里 / 16 为啥不能用 >> 4?
 
-    temp = DS1302_readByte(DSTIME_DATE + 1);
-    ds_time.date = temp >> 4 * 10 + temp % 16;
+    // 移位操作一定要加括号，移位操作的优先级要比 + - x / 要低，所以 temp >> 4 * 10 就变成了 temp >> 40 !!!
+    ds_time[0] = ( temp >> 4 ) * 10 + temp % 16;
 
-    temp = DS1302_readByte(DSTIME_HOUR + 1);
-    ds_time.hour = temp >> 4 * 10 + temp % 16;
+    temp = DS1302_readByte(DSTIME_MONTH);
+    ds_time[1] = ( temp >> 4 ) * 10 + temp % 16;
 
-    temp = DS1302_readByte(DSTIME_MIN + 1);
-    ds_time.min = temp >> 4 * 10 + temp % 16;
+    temp = DS1302_readByte(DSTIME_DATE);
+    ds_time[2] = ( temp >> 4 ) * 10 + temp % 16;
 
-    temp = DS1302_readByte(DSTIME_SEC + 1);
-    ds_time.sec = temp >> 4 * 10 + temp % 16;
+    temp = DS1302_readByte(DSTIME_HOUR);
+    ds_time[3] = ( temp >> 4 ) * 10 + temp % 16;
 
-    temp = DS1302_readByte(DSTIME_DAY + 1);
-    ds_time.day = temp >> 4 * 10 + temp % 16;
+    temp = DS1302_readByte(DSTIME_MIN);
+    ds_time[4] = ( temp >> 4 ) * 10 + temp % 16;
+
+    temp = DS1302_readByte(DSTIME_SEC);
+    ds_time[5] = ( temp >> 4 ) * 10 + temp % 16;
+
+    temp = DS1302_readByte(DSTIME_DAY);
+    ds_time[6] = ( temp >> 4 ) * 10 + temp % 16;
 }
