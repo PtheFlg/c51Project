@@ -1,0 +1,16 @@
+.vscode/
+Listings/
+Objects/
+
+*.uvopt
+*.uvproj
+
+*.lst
+*.m51
+
+*.__i
+*.obj 
+*.hex
+*.htm
+*.lnp
+*.uvgui.*
