@@ -1,41 +1,8 @@
 #include <REGX52.H>
+#include "Nixie.h"
 
 #define uchar unsigned char
 #define _DELAY 5
-
-uchar NUMBERS[] = {
-    0x3F,
-    0x06,
-    0x5B,
-    0x4F,
-    0x66,
-    0x6D,
-    0x7D,
-    0x07,
-    0x7F,
-    0x6F,
-
-    0x77,
-    0x7C,
-    0x39,
-    0x5E,
-    0x79,
-    0x71
-};
-
-void delay(int xms)		//@12.000MHz
-{
-	uchar i, j;
-
-	do{
-		i = 2;
-		j = 239;
-		do
-		{
-			while (--j);
-		} 	while (--i);
-	}while( --xms);
-}
 
 /**
  * 选中某一个数目管
@@ -48,11 +15,11 @@ void delay(int xms)		//@12.000MHz
  * 也就是 111 000 11 加上 10 再左移两位
  */
 
-void selectLeds(uchar i) {
-    uchar s = 0xE3 + ( (i - 1) << 2 );
+// void selectLeds(uchar i) {
+//     uchar s = 0xE3 + ( (i - 1) << 2 );
 
-    P2 = s;
-}
+//     P2 = s;
+// }
 
 /**
  * 选中某个数码管并显示 number
@@ -67,13 +34,13 @@ void selectLeds(uchar i) {
  * 解决办法就是：数码管稳定的显示 2ms 后，将 P0 归 0，不让他显示了
  * 这样下一个数码管就不会显示上一个数字
  */
-void nixie(uchar i, uchar number) {
-    selectLeds(i);
-    P0 = NUMBERS[number];
+// void nixie(uchar i, uchar number) {
+//     selectLeds(i);
+//     P0 = NUMBERS[number];
 
-    delay(2);
-    P0 = 0x00;
-}
+//     delay(2);
+//     P0 = 0x00;
+// }
 
 void main() {
     /**
@@ -104,13 +71,17 @@ void main() {
         // P0 = NUMBERS[0]; // 0011 1111  0x3F = 0
         // delay(_DELAY);
 
-        nixie(8, 2);
-        // delay(5);
+        // nixie(8, 2);
+        // // delay(5);
 
-        nixie(7, 5);
-        // delay(5);
+        // nixie(7, 5);
+        // // delay(5);
 
-        nixie(6, 0);
-        // delay(5);
+        // nixie(6, 0);
+        // // delay(5);
+
+        Nixie_showNum(7, 1);
+        Nixie_showNum(6, 2);
+        Nixie_showNum(5, 3);
     }
 }
