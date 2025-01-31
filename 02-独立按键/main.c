@@ -1,5 +1,8 @@
 #include <REGX52.H>
 
+#include "SingleKey.h"
+
+#define BYTE unsigned char
 void delay(int xms)		//@12.000MHz
 {
 	unsigned char i, j;
@@ -79,6 +82,8 @@ void ledLeft() {
         P2 = (P2 >> 1) + 0x80;
 }
 
+BYTE keyNum = 0;
+
 
 void main() {
 
@@ -100,18 +105,38 @@ void main() {
     //     }
     // }
 
+    
+
     while(1) {
-        if(_buttonDown(0)) {
+        // if(_buttonDown(0)) {
+        //     P2 = 0xFE;
+        // } else if(_buttonDown(1)) {
+        //     ledLeft();
+        //     // delay(100);
+        // } else if(_buttonDown(2)) {
+        //     ledRight();
+        //     // delay(100);
+        // } else if(_buttonDown(3)) {
+        //     P2 = 0xFF;
+        // }
+
+
+
+        keyNum = singleKey();
+
+        if(keyNum == 1) {
             P2 = 0xFE;
-        } else if(_buttonDown(1)) {
+        }
+        if(keyNum == 2) {
             ledLeft();
-            // delay(100);
-        } else if(_buttonDown(2)) {
+        }
+        if(keyNum == 3) {
             ledRight();
-            // delay(100);
-        } else if(_buttonDown(3)) {
+        }
+        if(keyNum == 4) {
             P2 = 0xFF;
         }
+
     }
 
     
