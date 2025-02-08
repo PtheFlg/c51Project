@@ -53,7 +53,7 @@ void main() {
 
     while(1) {
         key = singleKey();
-
+ 
         if(key == 1) {
             SPEED++;
             SPEED %= 4;
